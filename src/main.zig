@@ -473,6 +473,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 }
             }
 
+            if (object.get("extras")) |extras| {
+                node.extras = extras.object;
+            }
+
             try self.data.nodes.append(node);
         }
     }
@@ -490,6 +494,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 camera.name = try alloc.dupe(u8, name.string);
             } else {
                 camera.name = try fmt.allocPrint(alloc, "Camera_{}", .{index});
+            }
+
+            if (object.get("extras")) |extras| {
+                camera.extras = extras.object;
             }
 
             if (object.get("type")) |name| {
@@ -568,6 +576,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
 
             if (object.get("inverseBindMatrices")) |inv_bind_mat4| {
                 skin.inverse_bind_matrices = parseIndex(inv_bind_mat4);
+            }
+
+            if (object.get("extras")) |extras| {
+                skin.extras = extras.object;
             }
 
             try self.data.skins.append(skin);
@@ -693,8 +705,16 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                         }
                     }
 
+                    if (prim_item.get("extras")) |extras| {
+                        primitive.extras = extras.object;
+                    }
+
                     try mesh.primitives.append(primitive);
                 }
+            }
+
+            if (object.get("extras")) |extras| {
+                mesh.extras = extras.object;
             }
 
             try self.data.meshes.append(mesh);
@@ -758,6 +778,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 accessor.byte_offset = @as(usize, @intCast(byte_offset.integer));
             }
 
+            if (object.get("extras")) |extras| {
+                accessor.extras = extras.object;
+            }
+
             const component_size: usize = switch (accessor.component_type) {
                 .byte => @sizeOf(i8),
                 .unsigned_byte => @sizeOf(u8),
@@ -810,6 +834,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 buffer_view.target = @as(Target, @enumFromInt(target.integer));
             }
 
+            if (object.get("extras")) |extras| {
+                buffer_view.extras = extras.object;
+            }
+
             try self.data.buffer_views.append(buffer_view);
         }
     }
@@ -830,6 +858,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 buffer.byte_length = @as(usize, @intCast(byte_length.integer));
             } else {
                 panic("Buffer's byteLength is missing.", .{});
+            }
+
+            if (object.get("extras")) |extras| {
+                buffer.extras = extras.object;
             }
 
             try self.data.buffers.append(buffer);
@@ -860,6 +892,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 for (nodes.array.items) |node| {
                     try scene.nodes.?.append(parseIndex(node));
                 }
+            }
+
+            if (object.get("extras")) |extras| {
+                scene.extras = extras.object;
             }
 
             try self.data.scenes.append(scene);
@@ -1073,6 +1109,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 }
             }
 
+            if (object.get("extras")) |extras| {
+                material.extras = extras.object;
+            }
+
             try self.data.materials.append(material);
         }
     }
@@ -1095,6 +1135,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                         texture.extensions.EXT_texture_webp = .{ .source = parseIndex(source) };
                     }
                 }
+            }
+
+            if (item.object.get("extras")) |extras| {
+                texture.extras = extras.object;
             }
 
             try self.data.textures.append(texture);
@@ -1150,6 +1194,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                         }
                     }
 
+                    if (sampler_item.object.get("extras")) |extras| {
+                        sampler.extras = extras.object;
+                    }
+
                     try animation.samplers.append(sampler);
                 }
             }
@@ -1193,8 +1241,16 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                         panic("Animation channel's target is missing.", .{});
                     }
 
+                    if (channel_item.object.get("extras")) |extras| {
+                        channel.extras = extras.object;
+                    }
+
                     try animation.channels.append(channel);
                 }
+            }
+
+            if (object.get("extras")) |extras| {
+                animation.extras = extras.object;
             }
 
             try self.data.animations.append(animation);
@@ -1222,6 +1278,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                 sampler.wrap_t = @as(WrapMode, @enumFromInt(wrap_t.integer));
             }
 
+            if (object.get("extras")) |extras| {
+                sampler.extras = extras.object;
+            }
+
             try self.data.samplers.append(sampler);
         }
     }
@@ -1241,6 +1301,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
 
             if (object.get("bufferView")) |buffer_view| {
                 image.buffer_view = parseIndex(buffer_view);
+            }
+
+            if (object.get("extras")) |extras| {
+                image.extras = extras.object;
             }
 
             try self.data.images.append(image);
@@ -1294,6 +1358,10 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                         if (spot.object.get("outerConeAngle")) |outer_cone_angle| {
                             light.spot.?.outer_cone_angle = parseFloat(f32, outer_cone_angle);
                         }
+                    }
+
+                    if (object.get("extras")) |extras| {
+                        light.extras = extras.object;
                     }
 
                     try self.data.lights.append(light);
