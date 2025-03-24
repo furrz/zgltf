@@ -705,7 +705,7 @@ fn parseGltfJson(self: *Self, gltf_json: []const u8) !void {
                         }
                     }
 
-                    if (prim_item.get("extras")) |extras| {
+                    if (prim_item.object.get("extras")) |extras| {
                         primitive.extras = extras.object;
                     }
 
